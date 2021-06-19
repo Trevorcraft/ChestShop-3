@@ -183,6 +183,7 @@ public class PlayerInteract implements Listener {
         // check if player exists in economy
         if (!adminShop) {
             AccountCheckEvent event = new AccountCheckEvent(account.getUuid(), player.getWorld());
+            event.setAccountObj(account); //ChestShopPlus - PreAccountCheckEvent
             Bukkit.getPluginManager().callEvent(event);
             if(!event.hasAccount()) {
                 Messages.NO_ECONOMY_ACCOUNT.sendWithPrefix(player);

@@ -1,5 +1,6 @@
 package com.Acrobot.ChestShop.Events.Economy;
 
+import com.Acrobot.ChestShop.Database.Account;
 import org.bukkit.World;
 import org.bukkit.event.HandlerList;
 
@@ -11,8 +12,8 @@ import java.util.UUID;
  * @author Acrobot
  */
 public class AccountCheckEvent extends EconomicEvent {
+    private Account accountObj; //ChestShopPlus - PreAccountCheckEvent
     private static final HandlerList handlers = new HandlerList();
-
     private boolean outcome = false;
 
     private UUID account;
@@ -64,4 +65,15 @@ public class AccountCheckEvent extends EconomicEvent {
     public static HandlerList getHandlerList() {
         return handlers;
     }
+
+    //ChestShopPlus Start
+    public void setAccountObj(Account accountObj) {
+        this.accountObj = accountObj;
+    }
+
+    public Account getAccountObj() {
+        return accountObj;
+    }
+    //ChestShopPlus End
+
 }

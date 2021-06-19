@@ -5,6 +5,10 @@ import java.util.logging.Level;
 
 import javax.annotation.Nullable;
 
+import com.Acrobot.ChestShop.Events.PreAmountCheckEvent;
+import com.Acrobot.ChestShop.Events.PreCurrencyAddEvent;
+import com.Acrobot.ChestShop.Events.PreCurrencyCheckEvent;
+import com.Acrobot.ChestShop.Events.PreCurrencySubtractEvent;
 import com.Acrobot.ChestShop.Listeners.Economy.EconomyAdapter;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -103,6 +107,16 @@ public class VaultListener extends EconomyAdapter {
             return;
         }
 
+        //ChestShopPlus Start
+        PreAmountCheckEvent preAmountCheckEvent = new PreAmountCheckEvent(event.getAccount(), event.getAmount());
+        ChestShop.callEvent(preAmountCheckEvent);
+        if (preAmountCheckEvent.isCancelled()) {
+            event.setAmount(BigDecimal.ZERO);
+            return;
+        }
+        //ChestShopPlus End
+
+
         double balance = 0;
         OfflinePlayer lastSeen = Bukkit.getOfflinePlayer(event.getAccount());
 
@@ -132,6 +146,18 @@ public class VaultListener extends EconomyAdapter {
             return;
         }
 
+        //ChestShopPlus Start
+        PreCurrencyCheckEvent preCurrencyCheckEvent = new PreCurrencyCheckEvent(event.getAccount(), event.getAmount());
+        ChestShop.callEvent(preCurrencyCheckEvent);
+        if (preCurrencyCheckEvent.isCancelled()) {
+            event.hasEnough(true);
+            if (preCurrencyCheckEvent.isHasEnough()) {
+                event.hasEnough(true);
+            }
+            return;
+        }
+        //ChestShopPlus End
+
         World world = event.getWorld();
         OfflinePlayer lastSeen = Bukkit.getOfflinePlayer(event.getAccount());
 
@@ -150,6 +176,15 @@ public class VaultListener extends EconomyAdapter {
         if (!checkSetup() || event.wasHandled() || event.hasAccount()) {
             return;
         }
+
+        //ChestShopPlus Start
+        com.Acrobot.ChestShop.Events.PreAccountCheckEvent preAccountCheckEvent = new com.Acrobot.ChestShop.Events.PreAccountCheckEvent(event.getAccountObj());
+        ChestShop.callEvent(preAccountCheckEvent);
+        if (preAccountCheckEvent.isCancelled()) {
+            event.hasAccount(true);
+            return;
+        }
+        //ChestShopPlus End
 
         World world = event.getWorld();
         //String lastSeen = NameManager.getLastSeenName(event.getAccount());
@@ -182,6 +217,15 @@ public class VaultListener extends EconomyAdapter {
             return;
         }
 
+        //ChestShopPlus Start
+        PreCurrencyAddEvent preCurrencyAddEvent = new PreCurrencyAddEvent(event.getTarget(), event.getAmount());
+        ChestShop.callEvent(preCurrencyAddEvent);
+        if (preCurrencyAddEvent.isCancelled()) {
+            event.setAdded(true);
+            return;
+        }
+        //ChestShopPlus End
+
         World world = event.getWorld();
         //String lastSeen = NameManager.getLastSeenName(event.getTarget());
         OfflinePlayer lastSeen = Bukkit.getOfflinePlayer(event.getTarget());
@@ -205,6 +249,15 @@ public class VaultListener extends EconomyAdapter {
         if (!checkSetup() || event.wasHandled()) {
             return;
         }
+
+        //ChestShopPlus Start
+        PreCurrencySubtractEvent preCurrencySubtractEvent = new PreCurrencySubtractEvent(event.getTarget(), event.getAmount());
+        ChestShop.callEvent(preCurrencySubtractEvent);
+        if (preCurrencySubtractEvent.isCancelled()) {
+            event.setSubtracted(preCurrencySubtractEvent.isBalanceSufficient());
+            return;
+        }
+        //ChestShopPlus End
 
         World world = event.getWorld();
         //String lastSeen = NameManager.getLastSeenName(event.getTarget());

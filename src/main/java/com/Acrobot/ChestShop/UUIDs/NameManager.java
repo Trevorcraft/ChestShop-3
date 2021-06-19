@@ -9,6 +9,7 @@ import com.Acrobot.ChestShop.Configuration.Properties;
 import com.Acrobot.ChestShop.Database.Account;
 import com.Acrobot.ChestShop.Database.DaoCreator;
 import com.Acrobot.ChestShop.Events.AccountAccessEvent;
+import com.Acrobot.ChestShop.Events.AccountOwnerCheckEvent;
 import com.Acrobot.ChestShop.Events.AccountQueryEvent;
 import com.Acrobot.ChestShop.Permission;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
@@ -88,6 +89,19 @@ public class NameManager implements Listener {
         }
         return account;
     }
+
+    //ChestShopPlus Start
+    //Allows for the creation of accounts in other plugins
+    public static Account createAccount(Account account) {
+        try {
+            accounts.createOrUpdate(account);
+        } catch (SQLException e) {
+            ChestShop.getBukkitLogger().log(Level.WARNING, "Error while updating account " + account + ":", e);
+            return null;
+        }
+        return account;
+    }
+    //ChestShopPlus End
 
     /**
      * Get account info from a UUID
@@ -275,6 +289,17 @@ public class NameManager implements Listener {
         if (Permission.otherName(player, base, name)) {
             return true;
         }
+
+        //ChestShopPlus Start
+        // Allow other plugins to verify if a name is valid
+        AccountOwnerCheckEvent accountOwnerCheck = new AccountOwnerCheckEvent(player, name);
+        ChestShop.callEvent(accountOwnerCheck);
+
+        // Allow other plugins to override the name checking process here
+        if (accountOwnerCheck.appliesToName()) {
+            return accountOwnerCheck.isValid();
+        }
+        //ChestShopPlus End
 
         AccountQueryEvent queryEvent = new AccountQueryEvent(name);
         queryEvent.searchOfflinePlayers(false);
