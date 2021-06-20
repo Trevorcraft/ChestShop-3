@@ -291,14 +291,10 @@ public class NameManager implements Listener {
         }
 
         //ChestShopPlus Start
-        // Allow other plugins to verify if a name is valid
-        AccountOwnerCheckEvent accountOwnerCheck = new AccountOwnerCheckEvent(player, name);
-        ChestShop.callEvent(accountOwnerCheck);
-
-        // Allow other plugins to override the name checking process here
-        if (accountOwnerCheck.appliesToName()) {
-            return accountOwnerCheck.isValid();
-        }
+        AccountOwnerCheckEvent accountOwnerCheckEvent = new AccountOwnerCheckEvent(player, name);
+        ChestShop.callEvent(accountOwnerCheckEvent);
+        if (accountOwnerCheckEvent.isCancelled()) return true;
+        if (name.startsWith("@")) return false;
         //ChestShopPlus End
 
         AccountQueryEvent queryEvent = new AccountQueryEvent(name);
